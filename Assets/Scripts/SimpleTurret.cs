@@ -11,9 +11,7 @@ public class SimpleTurret : MonoBehaviour
     public float detectionRange = 5f;
     public LayerMask enemyMask;
     public float shootCooldown = 1f;
-    private float currentShootCooldown = 0f;
     public float rotationSpeed = 2f;
-    public float shootDelay = 0.3f;
     public Transform cannonTrans;
     private float currentShootDelay = 0f;
 
@@ -38,7 +36,6 @@ public class SimpleTurret : MonoBehaviour
     void TargetAndShoot()
     {
         if (!isActive) return;
-        currentShootCooldown -= Time.deltaTime;
 
         Collider2D[] enemiesDetected = Physics2D.OverlapCircleAll(transform.position, detectionRange, enemyMask);
         if (enemiesDetected.Length == 0) return;
@@ -51,12 +48,6 @@ public class SimpleTurret : MonoBehaviour
         }
 
         RotateToTarget(closestEnemy.transform);
-
-        if (currentShootCooldown <= 0f)
-        {
-            ShootTarget(closestEnemy.transform);
-            currentShootCooldown = shootCooldown;
-        }
     }
 
     private void ShootTarget(Transform target)
@@ -68,6 +59,8 @@ public class SimpleTurret : MonoBehaviour
         shotBullet.transform.position = cannonTrans.position;
         shotBullet.transform.eulerAngles = new Vector3(0, 0, angle);
         shotBullet.GetComponent<Rigidbody2D>().linearVelocity = direction * bulletSpeed;
+        Bullet bullet = shotBullet.GetComponent<Bullet>();
+        bullet.damage = bulletDMG;
     }
 
     private Transform GetClosestEnemy(Collider2D[] enemies)

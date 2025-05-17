@@ -65,14 +65,22 @@ public class SimpleEnemy : MonoBehaviour, IAttackable
         currentAttackCD = attackCD;
         GameObject objGO = Physics2D.OverlapCircle(transform.position, attackRange, objectiveMask).gameObject;
         objGO.GetComponent<IAttackable>().RecieveDamage(attackDMG);
-        Debug.Log("Attacked!");
     }
 
     public float RecieveDamage(float damage)
     {
+        Debug.Log("Enemy recieved damage");
         float newHealth = currentHealth - damage;
         currentHealth = newHealth;
+
+        if (currentHealth <= 0f) EnemyDie();
+
         return newHealth;
+    }
+
+    private void EnemyDie()
+    {
+        Destroy(gameObject);
     }
 
     void OnDrawGizmos()
