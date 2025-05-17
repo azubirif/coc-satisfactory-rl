@@ -69,7 +69,6 @@ public class SimpleEnemy : MonoBehaviour, IAttackable
 
     public float RecieveDamage(float damage)
     {
-        Debug.Log("Enemy recieved damage");
         float newHealth = currentHealth - damage;
         currentHealth = newHealth;
 
