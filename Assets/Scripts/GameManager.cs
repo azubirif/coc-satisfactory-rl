@@ -1,18 +1,21 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
+    public UnityEvent onEndRound;
 
     void Awake()
     {
-        if (!instance) instance = this;
+        if (instance == null) instance = this;
         else Destroy(this);
+
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-
+        onEndRound = new UnityEvent();
     }
 
     // Update is called once per frame
@@ -21,8 +24,14 @@ public class GameManager : MonoBehaviour
 
     }
 
+    public void OnEnemyDeath()
+    {
+        if (SimpleEnemy.enemyCount == 0) OnEndRound();
+    }
+
     public void OnEndRound()
     {
-        Debug.Log("Round finished!");
+        onEndRound.Invoke();
+        print("Round Won");
     }
 }

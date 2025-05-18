@@ -1,10 +1,14 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using LemEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class SimpleEnemy : MonoBehaviour, IAttackable
 {
+    public static int enemyCount = 0;
+    UnityEvent onEnemyDeath;
+
     public bool drawRange = false;
     public float maxHealth = 25f;
     private float currentHealth;
@@ -22,8 +26,11 @@ public class SimpleEnemy : MonoBehaviour, IAttackable
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        if (onEnemyDeath == null) onEnemyDeath = new UnityEvent();
+        onEnemyDeath.AddListener(GameManager.instance.OnEnemyDeath);
         currentHealth = maxHealth;
         rb = GetComponent<Rigidbody2D>();
+        enemyCount++;
     }
 
     void Update()
@@ -46,9 +53,12 @@ public class SimpleEnemy : MonoBehaviour, IAttackable
         if (dist <= attackRange) canAttack = true;
         else canAttack = false;
 
-
         Vector2 dirNorm = dir.normalized;
-
+        if (rb == null)
+        {
+            print("ERROR");
+            rb = GetComponent<Rigidbody2D>();
+        }
         rb.linearVelocity = dirNorm * moveSpeed * Time.fixedDeltaTime;
     }
 
@@ -79,6 +89,9 @@ public class SimpleEnemy : MonoBehaviour, IAttackable
 
     private void EnemyDie()
     {
+        enemyCount--;
+        onEnemyDeath.Invoke();
+        gameObject.SetActive(false);
         Destroy(gameObject);
     }
 
